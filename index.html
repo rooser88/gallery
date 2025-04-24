@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Galería Accesible</title>
+    <style>
+        .gallery {
+            max-width: 800px;
+            margin: 20px auto;
+            text-align: center;
+        }
+        
+        .main-image {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+            border: 2px solid #333;
+            margin-bottom: 10px;
+        }
+        
+        .thumbnails {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .thumbnails img {
+            width: 100px;
+            height: 70px;
+            object-fit: cover;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: 0.3s;
+        }
+        
+        .thumbnails img:hover,
+        .thumbnails img:focus {
+            border-color: #2196F3;
+            transform: scale(1.1);
+            outline: none;
+        }
+        
+        button {
+            padding: 8px 15px;
+            margin: 0 5px;
+            background: #2196F3;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="gallery">
+        <img id="mainImage" class="main-image" alt="Imagen principal de la galería">
+        <div class="controls">
+            <button onclick="changeImage(-1)">←</button>
+            <button onclick="changeImage(1)">→</button>
+        </div>
+        <div id="thumbnails" class="thumbnails"></div>
+    </div>
+
+    <script>
+        
+        const images = [
+            {
+                src: 'https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_1280.jpg',
+                alt: 'Árbol solitario al atardecer'
+            },
+            {
+                src: 'https://cdn.pixabay.com/photo/2015/12/01/20/28/road-1072823_1280.jpg',
+                alt: 'Camino rodeado de árboles en otoño'
+            },
+            {
+                src: 'https://cdn.pixabay.com/photo/2017/02/08/17/24/fantasy-2049567_1280.jpg',
+                alt: 'Paisaje montañoso con niebla'
+            },
+            {
+                src: 'https://cdn.pixabay.com/photo/2016/11/29/05/45/astronomy-1867616_1280.jpg',
+                alt: 'Vía láctea en el cielo nocturno'
+            },
+            {
+                src: 'https://cdn.pixabay.com/photo/2017/01/20/00/30/maldives-1993704_1280.jpg',
+                alt: 'Playa tropical con aguas cristalinas'
+            },
+            {
+                src: 'https://cdn.pixabay.com/photo/2018/08/14/13/23/ocean-3605547_1280.jpg',
+                alt: 'Olas del mar rompiendo en las rocas'
+            }
+        ];
+
+        let currentIndex = 0;
+        const mainImage = document.getElementById('mainImage');
+        const thumbnailsContainer = document.getElementById('thumbnails');
+
+        function handleFocus(event) {
+            console.log('Elemento enfocado:', event.target.alt);
+            event.target.style.borderColor = '#ff5722';
+        }
+
+        function handleBlur(event) {
+            console.log('Elemento perdio el foco:', event.target.alt);
+            event.target.style.borderColor = 'transparent';
+        }
+
+        function addTabFocus() {
+            const thumbs = document.querySelectorAll('.thumbnails img');
+            for(let i = 0; i < thumbs.length; i++) {
+                thumbs[i].setAttribute('tabindex', '0');
+            }
+        }
+
+        function initGallery() {
+            
+            images.forEach((img, index) => {
+                const thumb = document.createElement('img');
+                thumb.src = img.src;
+                thumb.alt = img.alt;
+                
+                
+                thumb.onmouseover = function() {
+                    this.style.transform = 'scale(1.1)';
+                }
+                
+                thumb.onmouseleave = function() {
+                    this.style.transform = 'scale(1)';
+                }
+                
+                thumb.onfocus = handleFocus;
+                thumb.onblur = handleBlur;
+                thumb.onclick = () => showImage(index);
+                
+                thumbnailsContainer.appendChild(thumb);
+            });
+            
+            addTabFocus();
+            showImage(0);
+        }
+
+        function showImage(index) {
+            currentIndex = index;
+            mainImage.src = images[index].src;
+            mainImage.alt = images[index].alt;
+            console.log('Mostrando imagen:', images[index].alt);
+        }
+
+        function changeImage(direction) {
+            currentIndex = (currentIndex + direction + images.length) % images.length;
+            showImage(currentIndex);
+        }
+
+
+        window.onload = initGallery;
+    </script>
+</body>
+</html>
